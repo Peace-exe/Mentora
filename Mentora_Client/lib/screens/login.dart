@@ -6,6 +6,8 @@ import 'package:chat_app/providers/token_provider.dart';
 import 'signup.dart';
 import 'chat.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:chat_app/providers/user_provider.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -21,6 +23,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   bool _isLoading = false;
   bool _keepMeSignedIn = false;
+
+  final storage = const FlutterSecureStorage();
 
   // =====================================================
   //                 LOGIN FUNCTION
@@ -53,11 +57,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         final access = data["tokens"]["accessToken"];
         final refresh = data["tokens"]["refreshToken"];
 
-        // SAVE TOKENS USING RIVERPOD
-        await ref.read(tokenProvider.notifier).setTokens(
-          access: access,
-          refresh: refresh,
-        );
+
+        await storage.write(key: "accessToken", value: access);
+        await storage.write(key: "refreshToken", value: refresh);
+
+        final userData = data['data'];
+        ref.read(userProvider.notifier).addUser(userData);
 
         _showSnackBar("Login Successful!");
 

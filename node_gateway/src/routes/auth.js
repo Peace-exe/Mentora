@@ -158,7 +158,7 @@ authRouter.post("/logout", async (req, res) => {
 });
 
 
-authRouter.post("/refreshAccess", async (req, res) => {
+authRouter.post("/getAccessToken", async (req, res) => {
   const { refreshToken } = req.body;
   if (!refreshToken)
     return res.status(401).json({ message: "No refresh token provided" });
@@ -168,16 +168,17 @@ authRouter.post("/refreshAccess", async (req, res) => {
     return res.status(403).json({ message: "Invalid refresh token" });
 
   try {
+    //this verifies the token's signature , decodes payload and checks if the token is expired (exp field)
     const payload = jwt.verify(refreshToken, refreshTokenKey);
     const accessToken = jwt.sign(
       { _id: payload._id },
       accessTokenKey,
-      { expiresIn: "15m" }
+      { expiresIn: "30m" }
     );
-    res.json({ accessToken });
+    res.json({ accessToken : accessToken });
   } catch (err) {
     if (err.name === "TokenExpiredError") {
-      // Delete only if token is expired
+      // Delete only if refresh token is expired
       await RefreshTokenModel.deleteOne({ token: refreshToken });
       return res.status(403).json({ message: "Refresh token expired" });
     }

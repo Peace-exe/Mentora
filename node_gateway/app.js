@@ -5,7 +5,7 @@ const connectDB = require("./src/config/database");
 const cookieParser = require("cookie-parser");
 const http = require("http");
 const {WebSocketServer} = require("ws");
-const { notifyStatus, forwardMessageToRAG } = require("./src/rag/ragService");
+const { notifyDisconnect, forwardMessageToRAG } = require("./src/rag/ragService");
 
 const app = express();
 const server = http.createServer(app);
@@ -23,7 +23,7 @@ app.use("",authRouter);
 
 wss.on("connection", async(ws)=>{
     
-
+/*
     try{
         await notifyStatus("on");
         console.log("flutter connected.");
@@ -40,7 +40,7 @@ wss.on("connection", async(ws)=>{
             ragOnline:false
         }));
     }
-    
+ */   
     
 
     
@@ -54,7 +54,7 @@ wss.on("connection", async(ws)=>{
         const ragResponse = await forwardMessageToRAG(message);
         ws.send(JSON.stringify({
       type: "ragResponse",
-      data: ragResponse,
+      data: ragResponse.response,
       status:"success"
     }));
     } catch (err) {
@@ -75,7 +75,7 @@ wss.on("connection", async(ws)=>{
 
     // Tell RAG that the user is offline
     try {
-        await notifyStatus("off");
+        await notifyDisconnect();
         console.log("flutter disconnected.");
     } catch (err) {
         console.error("Failed to notify rag service.\n"+err.message);

@@ -32,7 +32,10 @@ async def process_data(query: userQuery, status: Status):
         return {"response": llmResponse}
     except Exception as err:
         log_error(err)
-        return {"error": str(err)}
+        return JSONResponse(
+            status_code=400,
+            content={"error": str(err)}
+        )
 
 @app.post("/getEmbeddings/")
 def getEmbeddings(facts: recordInfo):

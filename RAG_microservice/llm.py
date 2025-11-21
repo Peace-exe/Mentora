@@ -3,9 +3,10 @@ import logging
 from enum import Enum
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.prompts import ChatPromptTemplate
-from langchain.chains.llm import LLMChain
+#from langchain.chains.llm import LLMChain
 from langchain.memory import ConversationBufferMemory
-from langchain_core.pydantic_v1 import BaseModel,Field
+#from langchain_core.runnables import RunnableSequence
+from pydantic import BaseModel,Field
 from dotenv import load_dotenv
 from debug_logger import log_error
 
@@ -34,7 +35,7 @@ prompt = ChatPromptTemplate.from_messages([
     ("system",
      "You are an AI assistant for Gautam Buddha University. "
      "You MUST return a JSON object following this schema: "
-     "{ answer: string, knowsAnswer: boolean }. "
+     "{{ answer: string, knowsAnswer: boolean }}. "
      "Keep the answer concise **when the question can be answered briefly**, "
      "but if detailed explanation is required, you may exceed the usual length "
      "to maintain clarity and completeness. "
@@ -66,24 +67,36 @@ async def call_llm(query: str, context: str, status: Status) -> str:
                 )
 
                 structuredLLM = llm.with_structured_output(QAresponse)
-
+                '''
                 chain = LLMChain(
                     llm=structuredLLM,
                     prompt=prompt,
                     memory=conversationMemory,
                     verbose=True
                 )
+                '''
+                chain= prompt | structuredLLM
+
+            chat_history = conversationMemory.load_memory_variables({}).get("chat_history", "")
 
             # RUN THE CHAIN
-            response : QAresponse = await chain.apredict(
-                user_query=query,
-                context=context
-            )
+            response: QAresponse = await chain.ainvoke({
+                "user_query": query,
+                "context": context,
+                "chat_history": chat_history
+            })
+
             if not response.knowsAnswer:
                 
                 return "Model does not know the answer to this query please contact the concerning authority."
-            else:
-                return response.answer
+            
+                
+            conversationMemory.save_context(
+                {"user_query": query},
+                {"answer": response.answer}
+            )
+
+            return response.answer
 
         # TURN MEMORY OFF
         elif status == Status.off:

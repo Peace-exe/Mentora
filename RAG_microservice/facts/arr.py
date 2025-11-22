@@ -49,3 +49,29 @@ admission_steps = [
     "Step 19 of register for admission: Apply for hostel accommodation .",
     "Step 20 of register for admission: Receive your student credentials from the GBU ERP."
 ]
+
+
+gbu_admission_steps = [
+    "Step 1 of application process of admission: Visit the official Gautam Buddha University admission portal to start the application process.",
+    "Step 2 of application process of admission: Click on the New Registration option on the admission portal.",
+    "Step 3 of application process of admission: Register using a valid personal details on the admission portal.",
+    "Step 4 of application process of admission: Verify your registration using the OTP sent to your mobile number.",
+    "Step 5 of application process of admission: Log in to the admission portal after completing the registration process.",
+    "Step 6 of application process of admission: Enter your personal details in the online application form.",
+    "Step 7 of application process of admission: Enter your academic qualifications in the online application form.",
+    "Step 8 of application process of admission: Select your preferred academic program in the application form.",
+    "Step 9 of application process of admission: Upload scanned copies of required documents to the admission portal.",
+    "Step 10 of application process of admission: Pay the application fee using the online payment options available on the portal.",
+    "Step 11 of application process of admission: Submit the completed application form after reviewing all details.",
+    "Step 12 of application process of admission: Download the submitted application form from the admission portal.",
+    "Step 13 of application process of admission: Note your application number for future admission-related communication.",
+    "Step 14 of application process of admission: Check the admission portal for updates on entrance tests or merit lists.",
+    "Step 15 of application process of admission: Appear for the GBU entrance test if the selected program requires an entrance exam.",
+    "Step 16 of application process of admission: Check your entrance test result on the admission portal.",
+    "Step 17 of application process of admission: Participate in the counselling process if your program includes counselling.",
+    "Step 18 of application process of admission: Attend document verification as per the counselling schedule.",
+    "Step 19 of application process of admission: Submit original documents during the physical verification process.",
+    "Step 20 of application process of admission: Pay the admission confirmation fee within the given deadline.",
+    "Step 21 of application process of admission: Download your provisional admission letter from the portal after fee payment.",
+    "Step 22 of application process of admission: Report to the university on the assigned date for final admission formalities."
+]

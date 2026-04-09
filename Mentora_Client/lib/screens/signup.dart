@@ -4,6 +4,9 @@ import 'package:chat_app/services/theme_service.dart';
 import 'chat.dart';
 import 'package:chat_app/services/callSignup.dart';
 import 'login.dart';
+import 'package:dio/dio.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -18,6 +21,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  XFile? _selectedImage;
+  final picker=ImagePicker();
+
+  pickImage() async{
+    final img=await picker.pickImage(source:ImageSource.gallery);
+    setState(() {
+      _selectedImage=img;
+    });
+  }
 
   bool _isLoading = false;
   String? _passwordError;

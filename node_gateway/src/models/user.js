@@ -13,6 +13,10 @@ const userSchema = mongoose.Schema({
         unique:true,
         sparse:true
     },
+    photoURL:{
+        type:String,
+        trim:true
+    },
     role:{
         type :String,
         enum:['user','admin'],

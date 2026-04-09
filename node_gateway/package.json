@@ -4,7 +4,7 @@
   "description": "gateway service for Mentora",
   "main": "index.js",
   "scripts": {
-    "start": "node \"E:\\minor project\\node_gateway\\app.js\"",
+    "start": "set NODE_OPTIONS=--dns-result-order=ipv4first && node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Aman Yadav",

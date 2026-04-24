@@ -11,7 +11,8 @@ from debug_logger import log_error
 from store_embeddings import upsertFacts
 import os
 from routes.notice import noticeRouter
-
+from contextlib import asynccontextmanager
+from config.database import connectDB, disconnectDB
 
 class userQuery(BaseModel):
     query: str
@@ -23,9 +24,16 @@ class recordInfo(BaseModel):
     department:str
     idPrefix:str
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    client = await connectDB()
+    yield
+    await disconnectDB(client)
 
-app = FastAPI()
+
+app = FastAPI(lifespan=lifespan)
 load_model_once()
+
 
 @app.post("/callLLM")
 async def process_data(query: userQuery, status: Status):

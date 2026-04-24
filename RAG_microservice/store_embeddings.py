@@ -20,31 +20,37 @@ dummy_data = [
 ]
 
 
+# ── separated metadata builder ──────────────────────────────
+def buildMetadata(question: str, questionId: str, factId : str) -> dict:
+    return {
+        "question" : question,
+        "questionId" : questionId,
+        "factId" : factId, 
+        "timestamp" : datetime.now(timezone.utc).isoformat()
+    }
 
-def upsertFacts(data : list[str],category,subcategory,department,idPrefix):
+def buildVectors(data: list[str], embeddings: list, category: str, subcategory: str, department: str, idPrefix: str) -> list:
+    return [
+        {
+            "id": f"{idPrefix}-{i}",
+            "values": embeddings[i],
+            "metadata": buildMetadata(text, category, subcategory, department)
+        }
+        for i, text in enumerate(data)
+    ]
+# ─────────────────────────────────────────────────────────────
 
+
+def upsertFacts(data: list[str], category, subcategory, department, idPrefix):
     try:
         embeddings = generate_embeddings(data)
-        timestamp = datetime.now(timezone.utc).isoformat()
-        to_upsert = []
-        for i, text in enumerate(data):
-            to_upsert.append({
-                "id": f"{idPrefix}-{i}",              # unique ID
-                "values": embeddings[i],
-                "metadata": {"text": text,
-                             "category":category,
-                             "subcategory":subcategory,
-                             "department": department,
-                             "timestamp":timestamp
-                             }
-            })
+        to_upsert = buildVectors(data, embeddings, category, subcategory, department, idPrefix)
 
         index.upsert(vectors=to_upsert)
         print(f"Input: {len(data)}, Output: {len(embeddings)}")
 
         return f"Input: {len(data)}, Output: {len(embeddings)}"
+
     except Exception as err:
         log_error(err)
-        raise RuntimeError(f"Error! :\n{err}") 
-    
-    
+        raise RuntimeError(f"Error! :\n{err}")

@@ -24,7 +24,7 @@ async def connectDB():
             database=client[settings.DB_NAME],
             document_models=DOCUMENT_MODELS
         )
-        print("✅ MongoDB connected successfully")
+        print("\n✅ MongoDB connected successfully\n")
         return client
     except Exception as e:
         print(f"❌ MongoDB connection failed: {e}")

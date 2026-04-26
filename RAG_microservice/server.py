@@ -2,7 +2,7 @@ from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 import uvicorn
-from ngrok_config import start_ngrok
+from config.ngrok import start_ngrok
 from llm import call_llm, Status
 from getEmbeddings import generate_embeddings
 from context import context
@@ -11,8 +11,11 @@ from debug_logger import log_error
 from store_embeddings import upsertFacts
 import os
 from routes.notice import noticeRouter
+from routes.injestion import injestionRouter
 from contextlib import asynccontextmanager
 from config.database import connectDB, disconnectDB
+from injestion.chunker import semantic_chunking
+from config.groq import generate_questions
 
 class userQuery(BaseModel):
     query: str
@@ -79,6 +82,23 @@ def upsertRecords(records: recordInfo):
         )
 
 app.include_router(noticeRouter, prefix="/notice")
+app.include_router(injestionRouter, prefix="/injestion")
+
+@app.get("/test")
+def test():
+    fact = "Gautam Buddha University (GBU) offers 160+ courses across eight schools with admissions for 2026-27 primarily conducted through the Samarth portal and CUET system. To apply, students must visit the official website at gbu.ac.in, create an account using a valid email or phone number, fill in personal and academic details, choose their desired courses, upload scanned copies of required documents including photograph, signature, educational documents, and category certificates, pay the application fee online, submit the form, and download the confirmation page for future reference. Selection is primarily entrance-based — for UG and PG courses, GBU is adopting CUET for up to 50% of seats for 2026-27; B.Tech accepts JEE Main, CUET, or GBU-ET scores; MBA accepts CAT, MAT, XAT, CMAT, GMAT, or GBU-ET scores; B.Arch requires a valid NATA score along with 10+2 or 10+3 marks; and some programs like M.Tech offer merit-based or direct admission routes. For any queries, students can reach the admissions office at admissions@gbu.ac.in or call 0120-2344234 or 0120-2344247."
+    
+    chunks = semantic_chunking(fact)
+
+    HyQues= []
+    for chunk in chunks:
+        ques = generate_questions(chunk)
+        HyQues.append(ques)
+    return {
+        "chunks":chunks,
+        "HyQues":HyQues
+
+    }
 
     
 

@@ -1,5 +1,5 @@
 from getEmbeddings import generate_embeddings
-from pinecone_config import index
+from config.pinecone import index
 from debug_logger import log_error
 from datetime import datetime, timezone
 

@@ -1,8 +1,9 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException
 import os
 import shutil
-from ocr.ocr import process_all
+from injestion.ocr import process_all
 from fastapi.responses import JSONResponse
+
 noticeRouter = APIRouter()
 
 @noticeRouter.post("/storeNotice")

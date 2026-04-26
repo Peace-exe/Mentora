@@ -1,17 +1,21 @@
 from beanie import Document
 
-from typing import Literal
+from typing import Literal, Optional
 
 
 class UniversityInfo(Document):
 
-    fact : str
-    factId : str
-    subject : str
+    info : str
+    infoId : str
+    category : str
     source : str
+    lang : Literal["en", "hin"] = "en"
     hasTable : bool
     hasURL : bool
-    lang : Literal["en", "hin"] = "en"
+    hasMobileNo : bool
+    hasEmail : bool
+    chunks: Optional[list[str]] = None
+    hyQues : Optional[list[list[str]]] = None
 
     class Settings:
         name = "universityInfo"

@@ -1,14 +1,17 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, UploadFile, File
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import Literal
 import re
-
 from injestion.chunker import semantic_chunking
 from config.groq import generate_questions
 from models.universityInfo import UniversityInfo
 from config.pinecone import index
 from getEmbeddings import generate_embeddings
+import os
+import shutil
+from injestion.ocr import process_files
+
 
 injestionRouter = APIRouter()
 
@@ -22,6 +25,7 @@ class info(BaseModel):
 
 @injestionRouter.post("/upsertInfo")
 async def upsertInfo(body: info):
+
     fullInfo = body.info
     storedDoc = None
 
@@ -127,3 +131,44 @@ async def upsertInfo(body: info):
         "chunks": chunks,
         "hyQues": hyQues
     })
+
+
+@injestionRouter.post("/storeNotice")
+async def storeNotice(file: UploadFile = File(...)):
+
+    
+    SUPPORTED = {".pdf", ".jpg", ".jpeg", ".png"}
+
+    try:
+        
+        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+        UPLOAD_DIR = os.path.join(BASE_DIR, "../ocr/inputImg")
+        os.makedirs(UPLOAD_DIR, exist_ok=True)
+        filename = file.filename
+
+        ext = os.path.splitext(filename)[1].lower()
+        if ext not in SUPPORTED: raise HTTPException(status_code=400, detail=f"Unsupported file type: {ext}")
+
+                                       
+                      
+        
+        file_path = os.path.join(UPLOAD_DIR, filename)
+        
+        with open(file_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+
+        res = process_files()
+
+        return JSONResponse(
+            status_code=201,
+            content={
+                "message":"Successfull",
+                "data":res
+            }
+        )
+
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Something went wromg.\n{e}")

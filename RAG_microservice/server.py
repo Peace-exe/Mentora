@@ -82,7 +82,7 @@ def upsertRecords(records: recordInfo):
             content={"error": str(err)}
         )
 
-app.include_router(noticeRouter, prefix="/notice")
+#app.include_router(noticeRouter, prefix="/notice")
 app.include_router(injestionRouter, prefix="/injestion")
 app.include_router(retrievalRouter, prefix="/retrieval")
 

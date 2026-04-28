@@ -92,7 +92,7 @@ def ocr_page(pil_image):
 
 
 # --- process all files ---
-def process_all() -> list[dict]:
+def process_files() -> list[dict]:
     os.makedirs(INPUT_DIR, exist_ok=True)
 
     files_to_process = [

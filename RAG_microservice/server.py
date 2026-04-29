@@ -13,6 +13,7 @@ import os
 from routes.notice import noticeRouter
 from routes.injestion import injestionRouter
 from routes.retrieval import retrievalRouter
+from routes.auth import authRouter
 from contextlib import asynccontextmanager
 from config.database import connectDB, disconnectDB
 from injestion.chunker import semantic_chunking
@@ -85,6 +86,7 @@ def upsertRecords(records: recordInfo):
 #app.include_router(noticeRouter, prefix="/notice")
 app.include_router(injestionRouter, prefix="/injestion")
 app.include_router(retrievalRouter, prefix="/retrieval")
+app.include_router(authRouter, prefix="/auth")
 
 @app.get("/test")
 def test():

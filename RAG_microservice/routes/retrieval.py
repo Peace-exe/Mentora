@@ -1,16 +1,18 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 from getEmbeddings import generate_embeddings
 from config.pinecone import index
 from models.universityInfo import UniversityInfo, ChunkProjection
 from bson import ObjectId
 from config.groq import generate_response
+from middlewares.auth import require_role
+
 retrievalRouter = APIRouter()
 
 class UserQuery(BaseModel):
     query: str 
 @retrievalRouter.post("/query")
-async def getResponse(body: UserQuery):
+async def getResponse(body: UserQuery, dep = Depends(require_role("admin", "user"))):
     try:
         query = body.query
 

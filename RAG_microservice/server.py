@@ -9,8 +9,7 @@ from context import context
 from getEmbeddings import load_model_once
 from debug_logger import log_error
 from store_embeddings import upsertFacts
-import os
-from routes.notice import noticeRouter
+#from routes.notice import noticeRouter
 from routes.injestion import injestionRouter
 from routes.retrieval import retrievalRouter
 from routes.auth import authRouter
@@ -18,6 +17,8 @@ from contextlib import asynccontextmanager
 from config.database import connectDB, disconnectDB
 from injestion.chunker import semantic_chunking
 from config.groq import generate_questions
+from middlewares.auth import userAuth
+from fastapi.middleware.cors import CORSMiddleware
 
 class userQuery(BaseModel):
     query: str
@@ -39,6 +40,14 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 load_model_once()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  
+    allow_credentials=True,   
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+app.middleware("http")(userAuth)
 
 @app.post("/callLLM")
 async def process_data(query: userQuery, status: Status):

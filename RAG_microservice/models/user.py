@@ -25,24 +25,20 @@ class User(Document):
     class Settings:
         name = "users"
 
-    @field_validator("password")
-    @classmethod
-    def strong_password(cls, v):
-        if len(v) < 8:
-            raise ValueError("Password must be at least 8 characters")
-        if not re.search(r"[a-z]", v):
-            raise ValueError("Password must contain at least 1 lowercase letter")
-        if not re.search(r"[A-Z]", v):
-            raise ValueError("Password must contain at least 1 uppercase letter")
-        if not re.search(r"\d", v):
-            raise ValueError("Password must contain at least 1 number")
-        if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", v):
-            raise ValueError("Password must contain at least 1 special character")
-        return v
     
     async def validate_password(self, plain_password: str) -> bool:
         import bcrypt
         return bcrypt.checkpw(plain_password.encode(), self.password.encode())
+    
+    @field_validator("admin_id")
+    @classmethod
+    def validate_admin_id(cls, v):
+        if v is None:
+            return v
+        uuid4_regex = r"^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+        if not re.match(uuid4_regex, v):
+            raise ValueError("admin_id must be a valid UUID v4")
+        return v
     
     
 
@@ -63,6 +59,22 @@ class UserRegister(BaseModel):
     email: EmailStr
     password: str
     photo_url: Optional[str] = None
+
+    @field_validator("password")
+    @classmethod
+    def strong_password(cls, v):
+        if len(v) < 8:
+            raise ValueError("Password must be at least 8 characters")
+        if not re.search(r"[a-z]", v):
+            raise ValueError("Password must contain at least 1 lowercase letter")
+        if not re.search(r"[A-Z]", v):
+            raise ValueError("Password must contain at least 1 uppercase letter")
+        if not re.search(r"\d", v):
+            raise ValueError("Password must contain at least 1 number")
+        if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", v):
+            raise ValueError("Password must contain at least 1 special character")
+        return v
+    
 
 class AdminRegister(UserRegister):
     admin_id: str = Field(..., max_length=50)  # required for admins

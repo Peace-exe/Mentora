@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, UploadFile, File
+from fastapi import APIRouter, HTTPException, UploadFile, File, Depends
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import Literal
@@ -11,7 +11,7 @@ from getEmbeddings import generate_embeddings
 import os
 import shutil
 from injestion.ocr import process_files
-
+from middlewares.auth import require_role
 
 injestionRouter = APIRouter()
 
@@ -24,7 +24,7 @@ class info(BaseModel):
 
 
 @injestionRouter.post("/upsertInfo")
-async def upsertInfo(body: info):
+async def upsertInfo(body: info, dep = Depends(require_role("admin"))):
 
     fullInfo = body.info
     storedDoc = None
@@ -134,7 +134,7 @@ async def upsertInfo(body: info):
 
 
 @injestionRouter.post("/storeNotice")
-async def storeNotice(file: UploadFile = File(...)):
+async def storeNotice(file: UploadFile = File(...), dep = Depends(require_role("admin"))):
 
     
     SUPPORTED = {".pdf", ".jpg", ".jpeg", ".png"}

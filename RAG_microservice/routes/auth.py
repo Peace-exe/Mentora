@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException, Response
 from models.user import User, UserRegister, UserLogin
 import bcrypt
+from uuid import uuid4
 
 authRouter = APIRouter()
 
@@ -65,3 +66,30 @@ async def login(body: UserLogin, response: Response):
 async def logout(response: Response):
     response.delete_cookie(key="token")
     return {"message": "Logged out successfully", "success": True}
+
+
+@authRouter.post("/admin/signup", status_code=201)
+async def admin_signup(body: UserRegister):
+    try:
+        existing_user = await User.find_one(User.email == body.email)
+        if existing_user:
+            raise HTTPException(status_code=400, detail="Email already registered")
+
+        hashed_password = bcrypt.hashpw(body.password.encode(), bcrypt.gensalt()).decode()
+
+        user = User(
+            first_name=body.first_name.strip(),
+            last_name=body.last_name.strip(),
+            email=body.email,
+            password=hashed_password,
+            role="admin",
+        )
+        await user.insert()
+
+        return {"message": "Admin created successfully", "success": True}
+
+    except HTTPException:
+        raise
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")

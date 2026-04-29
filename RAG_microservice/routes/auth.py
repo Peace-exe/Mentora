@@ -78,6 +78,7 @@ async def admin_signup(body: UserRegister):
         hashed_password = bcrypt.hashpw(body.password.encode(), bcrypt.gensalt()).decode()
 
         user = User(
+            admin_id=str(uuid4()),
             first_name=body.first_name.strip(),
             last_name=body.last_name.strip(),
             email=body.email,

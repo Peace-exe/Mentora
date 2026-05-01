@@ -1,4 +1,6 @@
 import { Link } from "react-router-dom";
+import {motion} from 'framer-motion';
+import { RoughShadow } from "./RoughShadow";
 export default function Hero() {
   return (
     <section className="relative overflow-hidden">
@@ -8,29 +10,43 @@ export default function Hero() {
             For Gautam Buddha University
           </span>
           <h1 className="mt-5 text-5xl font-black leading-[0.95] md:text-7xl">
-            Your campus.<br />
-            <span className="bg-primary px-2">Answered.</span>
-          </h1>
+  <span className="relative z-10">Your campus.</span><br />
+  <span className="relative inline-block px-2">
+    <motion.span
+      className="highlight absolute inset-0  -z-10 rounded-sm"
+      initial={{ scaleX: 0 }}
+      animate={{ scaleX: 1 }}
+      transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
+      style={{ transformOrigin: "left center" }}
+    />
+
+    Answered.
+  </span>
+</h1>
           <p className="mt-6 max-w-lg text-lg font-medium text-muted-foreground">
             SAGE is a RAG-powered AI assistant that reads GBU's official handbooks,
             calendars and notices — so you don't have to. Ask anything, get sourced answers in seconds.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
+            <RoughShadow offset={5} roughness={0.5} hachureGap={3}  >
             <Link
               to="/chat"
-              className="brutal brutal-hover bg-primary px-6 py-3 text-lg font-black"
+              className="border-foreground border-[3px]  bg-primary px-6 py-3 text-lg font-black"
             >
               Try the Chatbot →
             </Link>
+            </RoughShadow>
+            <RoughShadow offset={5} roughness={0.5} hachureGap={3}  >
             <a
               href="#how"
-              className="brutal brutal-hover bg-background px-6 py-3 text-lg font-black"
+              className="border-foreground border-[3px] bg-background px-6 py-3 text-lg font-black"
             >
               How it works
             </a>
+            </RoughShadow>
           </div>
           <div className="mt-6 flex items-center gap-3 text-sm font-bold">
-            <div className="flex -space-x-2">
+            <div className="flex -space-x-2 overflow-hidden">
               {["bg-primary", "bg-secondary", "bg-accent"].map((c) => (
                 <div key={c} className={`h-8 w-8 rounded-full border-[3px] border-foreground ${c}`} />
               ))}

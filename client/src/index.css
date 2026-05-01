@@ -1,7 +1,9 @@
+@import "@fontsource-variable/bricolage-grotesque";
+@import "@fontsource-variable/dm-sans";
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-@import "@fontsource-variable/geist";
+
 
 @custom-variant dark (&:is(.dark *));
 
@@ -65,23 +67,23 @@
 :root {
   /* Neo-brutalist: bold mix on off-white */
   --radius: 0;
-  --background: oklch(0.985 0.01 90);
-  --foreground: oklch(0.15 0.02 270);
+  --background: oklch(0.9962 0.0183 106.73);
+  --foreground: oklch(0.2686 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.15 0.02 270);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.15 0.02 270);
-  --primary: oklch(0.72 0.22 5);            /* hot pink */
+  --primary: oklch(0.785978 0.125254 32.0181);            /* hot pink */
   --primary-foreground: oklch(0.15 0.02 270);
-  --secondary: oklch(0.85 0.18 220);        /* cyan */
+  --secondary: oklch(0.8079 0.0731 228.7);        /* cyan */
   --secondary-foreground: oklch(0.15 0.02 270);
-  --accent: oklch(0.92 0.2 100);            /* yellow */
+  --accent: oklch(0.9425 0.0648 86.75);            /* yellow */
   --accent-foreground: oklch(0.15 0.02 270);
   --muted: oklch(0.95 0.01 90);
   --muted-foreground: oklch(0.4 0.02 270);
   --destructive: oklch(0.6 0.25 25);
   --destructive-foreground: oklch(0.99 0 0);
-  --border: oklch(0.15 0.02 270);
+  --border: oklch(0.2686 0 0);
   --input: oklch(0.15 0.02 270);
   --ring: oklch(0.15 0.02 270);
   --brutal-shadow: 6px 6px 0 0 oklch(0.15 0.02 270);
@@ -109,7 +111,7 @@
   --card-foreground: oklch(0.984 0.003 247.858);
   --popover: oklch(0.208 0.042 265.755);
   --popover-foreground: oklch(0.984 0.003 247.858);
-  --primary: oklch(0.929 0.013 255.508);
+  --primary: oklch(0.4648 0.0964 324.84);
   --primary-foreground: oklch(0.208 0.042 265.755);
   --secondary: oklch(0.279 0.041 260.031);
   --secondary-foreground: oklch(0.984 0.003 247.858);
@@ -137,6 +139,29 @@
   --sidebar-ring: oklch(0.551 0.027 264.364);
 }
 
+.highlight {
+  
+  opacity: 0.75;
+  mix-blend-mode: multiply;
+}
+
+.highlight::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: #F28B74;
+  opacity: 0.75;
+  transform: rotate(-1.0deg) skewX(-0.8deg);
+  border-radius: 2px;
+  /* slightly wider than text, sits behind */
+  top: 8%;
+  bottom: 8%;
+  left: -4px;
+  right: -4px;
+  z-index: -1;
+  mix-blend-mode: multiply; /* dark mode: switch to 'screen' */
+}
+
 @layer base {
   * {
     border-color: var(--color-border);
@@ -145,7 +170,7 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
-    font-family: ui-sans-serif, system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    font-family: "DM Sans Variable", ui-sans-serif, sans-serif;
     background-image:
       linear-gradient(to right, oklch(0.15 0.02 270 / 0.06) 1px, transparent 1px),
       linear-gradient(to bottom, oklch(0.15 0.02 270 / 0.06) 1px, transparent 1px);
@@ -153,8 +178,9 @@
   }
 
   h1, h2, h3, h4 {
-    font-weight: 900;
-    letter-spacing: -0.02em;
+  font-family: "Bricolage Grotesque Variable", ui-serif, serif;
+  font-weight: 900;
+  letter-spacing: -0.02em;
   }
 }
 
@@ -182,4 +208,7 @@
     transform: translate(2px, 2px);
     box-shadow: 2px 2px 0 0 var(--color-border);
   }
+}
+html, body {
+  overflow-x: hidden;
 }

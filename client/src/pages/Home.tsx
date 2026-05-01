@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+
 import { Nav } from "../components/Nav";
 import  Footer  from "../components/Footer";
 import FAQ from '../components/FAQ';
@@ -7,7 +7,7 @@ import Hero from '../components/Hero';
 import Stats from '../components/Stats';
 import HowItWorks from '../components/HowItWorks';
 import CTA from '../components/CTA';
-
+import "../App.css"
 
 export default function HomePage() {
   return (

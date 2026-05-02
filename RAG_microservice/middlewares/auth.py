@@ -5,7 +5,7 @@ from os import getenv
 from models.user import User
 
 JWT_PRIVATE_KEY = getenv("JWT_PRIVATE_KEY")
-EXCLUDED_ROUTES = ["/auth/signup", "/auth/login"]
+EXCLUDED_ROUTES = ["/auth/signup", "/auth/login", "/injestion/storeNotice"]
 
 async def userAuth(request: Request, call_next):
 

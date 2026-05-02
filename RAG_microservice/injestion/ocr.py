@@ -14,7 +14,7 @@ load_dotenv()
 
 # --- config ---
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-INPUT_DIR = os.path.join(BASE_DIR, "inputImg")
+INPUT_DIR = os.path.join(BASE_DIR, "..", "ocr", "inputImg")
 SUPPORTED = {".pdf", ".jpg", ".jpeg", ".png"}
 
 llm = ChatGroq(
@@ -40,14 +40,14 @@ def ocr_page(pil_image):
         You are a document parser for university notices. Extract and structure the content strictly.
 
         Field rules:
-        - "response": factual summary of the content. Embed tables inline as HTML exactly where they appear in the original document. Plain text before and after tables. Do NOT use phrases like "The document", "The notice", "The order". State facts directly. Keep HTML tables as single-line strings with no newlines inside them.
+        - "response": factual summary of the content. Embed tables inline as Markdown exactly where they appear in the original document. Plain text before and after tables. Do NOT use phrases like "The document", "The notice", "The order". State facts directly.
         - "hasTable": true or false
         - "language": "hin" if Hindi dominant, "en" if English dominant
         - "hasURL": full URL string if found, false if not
 
         Example output:
         {
-          "response": "Hostel mess exemption granted to Jatin Kumar (235UIT026) and Shivani Priya (225/UCA/037) for session 2024-25. <table><thead><tr><th>Sr. No.</th><th>Name</th><th>Roll No.</th><th>Recommendation</th></tr></thead><tbody><tr><td>1</td><td>Jatin Kumar</td><td>235UIT026</td><td>Hostel & Mess Exemption</td></tr><tr><td>2</td><td>Shivani Priya</td><td>225/UCA/037</td><td>Hostel & Mess Exemption</td></tr></tbody></table> Order to be displayed on notice boards and university website. Signed by Dr. Manmohan Singh, In-Charge Student Affairs.",
+          "response": "Hostel mess exemption granted to Jatin Kumar (235UIT026) and Shivani Priya (225/UCA/037) for session 2024-25.\\n\\n| Sr. No. | Name | Roll No. | Recommendation |\\n|---------|------|----------|----------------|\\n| 1 | Jatin Kumar | 235UIT026 | Hostel & Mess Exemption |\\n| 2 | Shivani Priya | 225/UCA/037 | Hostel & Mess Exemption |\\n\\nOrder to be displayed on notice boards and university website. Signed by Dr. Manmohan Singh, In-Charge Student Affairs.",
           "hasTable": true,
           "language": "en",
           "hasURL": false

@@ -134,7 +134,7 @@ async def upsertInfo(body: info, dep = Depends(require_role("admin"))):
 
 
 @injestionRouter.post("/storeNotice")
-async def storeNotice(file: UploadFile = File(...), dep = Depends(require_role("admin"))):
+async def storeNotice(file: UploadFile = File(...)):
 
     
     SUPPORTED = {".pdf", ".jpg", ".jpeg", ".png"}

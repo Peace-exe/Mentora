@@ -7,10 +7,11 @@ import './App.css'
 import AdminPage from "./pages/Admin";
 import LoginPage from "./pages/Login";
 import SignupPage from "./pages/SignUp";
+import { useLenis } from "./hooks/useLenis";
 
 function App() {
   
-
+  useLenis();
   return (
     <>
       <BrowserRouter>

@@ -2,7 +2,7 @@ from pydantic_settings import BaseSettings
 from motor.motor_asyncio import AsyncIOMotorClient
 from beanie import init_beanie
 from models.universityInfo import UniversityInfo
-
+from models.user import User
 class Settings(BaseSettings):
     MONGODB_URI : str
     DB_NAME : str = "Mentora"
@@ -13,7 +13,8 @@ class Settings(BaseSettings):
 settings = Settings()
 
 DOCUMENT_MODELS = [
-    UniversityInfo
+    UniversityInfo,
+    User
     # add new models here only
 ]
 

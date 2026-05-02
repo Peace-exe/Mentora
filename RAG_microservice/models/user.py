@@ -16,7 +16,7 @@ class User(Document):
     role: Literal["user", "admin"] = "user"
     first_name: str = Field(..., min_length=1, max_length=50)
     last_name: str = Field(..., min_length=1, max_length=50)
-    email: Annotated[EmailStr, Indexed(unique=True)] 
+    email: Annotated[str, Indexed(unique=True)]
     password: str  
 
     created_at: datetime = Field(default_factory=datetime.utcnow)
@@ -24,6 +24,7 @@ class User(Document):
 
     class Settings:
         name = "users"
+        
 
     
     async def validate_password(self, plain_password: str) -> bool:

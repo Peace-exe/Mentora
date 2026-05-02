@@ -1,8 +1,5 @@
 import { useState } from "react";
-
-// If you're using React Router v6, import these instead:
 import { Link } from "react-router-dom";
-// and replace <a href="..."> with <Link to="...">
 
 type Doc = {
   name: string;
@@ -36,12 +33,11 @@ export default function AdminPage() {
     <div className="flex min-h-screen flex-col">
       <header className="border-b-[3px] border-foreground bg-background">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-          {/* Replace href with React Router <Link to="/"> if using react-router-dom */}
           <Link to="/" className="flex items-center gap-2">
             <div className="flex h-9 w-9 items-center justify-center bg-primary brutal-sm font-black">
-              S
+              M
             </div>
-            <span className="text-xl font-black">GBU SAGE</span>
+            <span className="text-xl font-black">Mentora</span>
             <span className="brutal-sm ml-2 bg-foreground px-2 py-0.5 text-xs font-black uppercase text-background">
               Admin
             </span>
@@ -67,7 +63,7 @@ export default function AdminPage() {
               Admin <span className="bg-primary px-2">dashboard.</span>
             </h1>
             <p className="mt-3 max-w-xl font-medium text-muted-foreground">
-              Manage documents, monitor indexing, and review what SAGE knows.
+              Manage documents, monitor indexing, and review what Mentora knows.
             </p>
           </div>
           <button className="brutal brutal-hover bg-primary px-6 py-3 text-lg font-black">
@@ -119,9 +115,7 @@ export default function AdminPage() {
                 <div className="col-span-2 font-medium">{d.type}</div>
                 <div className="col-span-2 font-medium">{d.chunks}</div>
                 <div className="col-span-2">
-                  <span
-                    className={`brutal-sm ${STATUS_BG[d.status]} px-2 py-0.5 text-xs font-black`}
-                  >
+                  <span className={`brutal-sm ${STATUS_BG[d.status]} px-2 py-0.5 text-xs font-black`}>
                     {d.status}
                   </span>
                 </div>

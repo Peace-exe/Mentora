@@ -80,8 +80,8 @@ Mentora is a **RAG (Retrieval-Augmented Generation)** system that ingests univer
 | Database | MongoDB (Beanie ODM + Motor) |
 | Vector DB | Pinecone (cosine metric, dense index) |
 | Embeddings | `google/embedding-gemma-300m` (768-dim) |
-| LLM | Groq — `llama-3.1-8b-instant` |
-| OCR | PaddleOCR 2.9.1 |
+| LLM | Groq — `openai/gpt-oss-120b` |
+| OCR | Groq OCR - `meta-llama/llama-4-scout-17b-16e-instruct` |
 | Summarization | Groq + LangChain |
 | Language | Python 3.11+ |
 

@@ -19,8 +19,8 @@ from injestion.chunker import semantic_chunking
 from config.groq import generate_questions
 from middlewares.auth import userAuth
 from fastapi.middleware.cors import CORSMiddleware
-from dotenv import load_dotenv
-from os import getenv
+#from dotenv import load_dotenv
+#from os import getenv
 class userQuery(BaseModel):
     query: str
 

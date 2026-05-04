@@ -95,7 +95,7 @@ def upsertRecords(records: recordInfo):
 
 #app.include_router(noticeRouter, prefix="/notice")
 app.include_router(injestionRouter, prefix="/injestion")
-app.include_router(retrievalRouter, prefix="/retrieval")
+app.include_router(retrievalRouter, prefix="/retrieval") #ws api
 app.include_router(authRouter, prefix="/auth")
 
 @app.get("/test")

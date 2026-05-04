@@ -10,11 +10,11 @@ retrievalRouter = APIRouter()
 
 @retrievalRouter.websocket("/query")
 async def getResponse(websocket: WebSocket):
+    
     user = await ws_require_role(websocket, "admin", "user")
     if not user:
         return
 
-    await websocket.accept()
     try:
         while True:
             body = await websocket.receive_json()
@@ -43,10 +43,6 @@ async def getResponse(websocket: WebSocket):
                 for m in results["matches"] if m["score"] >= 0.7
             ]
 
-            if not relevant_chunks:
-                await websocket.send_json({"success": False, "error": "No relevant information found for your query."})
-                continue
-
             # Step 3: Deduplicate
             seen = set()
             unique_pairs = []
@@ -58,44 +54,36 @@ async def getResponse(websocket: WebSocket):
 
             mongo_ids = list(set([pair[0] for pair in unique_pairs]))
 
-            # Step 4: MongoDB fetch
-            try:
-                docs = {
-                    str(doc.id): doc
-                    for doc in await UniversityInfo.find(
-                        {"_id": {"$in": [ObjectId(id) for id in mongo_ids]}}
-                    ).project(ChunkProjection).to_list()
-                }
-            except Exception as e:
-                await websocket.send_json({"success": False, "error": f"Database fetch failed: {str(e)}"})
-                continue
-
-            if not docs:
-                await websocket.send_json({"success": False, "error": "Could not retrieve documents from database."})
-                continue
-
-            # Step 5: Build context + meta
+            # Step 4: MongoDB fetch — sirf tab jab chunks mile hon
             context_chunks = []
             meta = {
                 "hasTable": False, "hasURL": False,
                 "hasMobileNo": False, "hasEmail": False, "lang": "en"
             }
 
-            for mongoId, chunkNo in unique_pairs:
-                doc = docs.get(mongoId)
-                if doc and doc.chunks and chunkNo < len(doc.chunks):
-                    context_chunks.append(doc.chunks[chunkNo])
-                    if doc.hasTable: meta["hasTable"] = True
-                    if doc.hasURL: meta["hasURL"] = True
-                    if doc.hasMobileNo: meta["hasMobileNo"] = True
-                    if doc.hasEmail: meta["hasEmail"] = True
-                    if doc.lang == "hin": meta["lang"] = "hin"
+            if unique_pairs:
+                try:
+                    docs = {
+                        str(doc.id): doc
+                        for doc in await UniversityInfo.find(
+                            {"_id": {"$in": [ObjectId(id) for id in mongo_ids]}}
+                        ).project(ChunkProjection).to_list()
+                    }
+                except Exception as e:
+                    await websocket.send_json({"success": False, "error": f"Database fetch failed: {str(e)}"})
+                    continue
 
-            if not context_chunks:
-                await websocket.send_json({"success": False, "error": "No relevant chunks could be extracted."})
-                continue
+                for mongoId, chunkNo in unique_pairs:
+                    doc = docs.get(mongoId)
+                    if doc and doc.chunks and chunkNo < len(doc.chunks):
+                        context_chunks.append(doc.chunks[chunkNo])
+                        if doc.hasTable: meta["hasTable"] = True
+                        if doc.hasURL: meta["hasURL"] = True
+                        if doc.hasMobileNo: meta["hasMobileNo"] = True
+                        if doc.hasEmail: meta["hasEmail"] = True
+                        if doc.lang == "hin": meta["lang"] = "hin"
 
-            # Step 6: LLM response
+            # Step 5: LLM — empty context bhi bhejo, LLM handle karega
             try:
                 llmResponse = await generate_response(context_chunks, query)
             except Exception as e:
@@ -115,4 +103,4 @@ async def getResponse(websocket: WebSocket):
     except WebSocketDisconnect:
         pass
     except Exception as e:
-        await websocket.send_json({"success": False, "error": f"Unexpected error: {str(e)}"})
+        await websocket.send_json({"success": False, "error": f"Unexpected error:{str(e)}"})

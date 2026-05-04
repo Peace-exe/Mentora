@@ -1,10 +1,11 @@
-from fastapi import APIRouter, HTTPException, Response
+from fastapi import APIRouter, HTTPException, Response, Request
 from models.user import User, UserRegister, UserLogin, UserResponse
 import bcrypt
 from uuid import uuid4
 from debug_logger import log_error
 from datetime import datetime, timedelta
-
+from os import getenv
+import jwt
 authRouter = APIRouter()
 
 
@@ -106,3 +107,32 @@ async def admin_signup(body: UserRegister):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+    
+
+
+
+
+@authRouter.get("/ws-token")
+async def get_ws_token(request: Request):
+    
+    JWT_PRIVATE_KEY = getenv("JWT_PRIVATE_KEY")
+
+    # httpOnly cookie se verify karo
+    token = request.cookies.get("token")
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+
+    try:
+        payload = jwt.decode(token, JWT_PRIVATE_KEY, algorithms=["HS256"])
+    except jwt.PyJWTError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+    # short-lived WS token banao (5 min)
+    ws_payload = {
+        "_id": payload.get("_id"),
+        "role": payload.get("role"),
+        "exp": datetime.utcnow() + timedelta(minutes=5)
+    }
+    ws_token = jwt.encode(ws_payload, JWT_PRIVATE_KEY, algorithm="HS256")
+    
+    return { "ws_token": ws_token }

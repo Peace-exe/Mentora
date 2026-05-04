@@ -46,6 +46,7 @@ class User(Document):
     async def get_jwt(self) -> str:
         payload = {
             "_id": str(self.id),
+            "role":str(self.role),
             "exp": datetime.utcnow() + timedelta(days=1)
         }
         token = jwt.encode(payload, JWT_PRIVATE_KEY, algorithm="HS256")

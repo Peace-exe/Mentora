@@ -5,9 +5,15 @@ from os import getenv
 from models.user import User
 
 JWT_PRIVATE_KEY = getenv("JWT_PRIVATE_KEY")
-EXCLUDED_ROUTES = ["/auth/signup", "/auth/login"]
+EXCLUDED_ROUTES = ["/auth/signup", "/auth/login", "/retrieval/query" ]
 
 async def userAuth(request: Request, call_next):
+
+    print(f"PATH: {request.url.path} | UPGRADE: {request.headers.get('upgrade')}")
+    
+    if request.headers.get("upgrade", "").lower() == "websocket":
+        print("WS request — skipping auth")
+        return await call_next(request)
 
     if request.url.path in EXCLUDED_ROUTES:
         return await call_next(request)

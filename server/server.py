@@ -41,14 +41,16 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 load_model_once()
 
+app.middleware("http")(userAuth)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  
-    allow_credentials=True,   
+    allow_origins=["http://localhost:5173"], 
+    allow_credentials=True,  
     allow_methods=["*"],
     allow_headers=["*"],
 )
-app.middleware("http")(userAuth)
+
 
 @app.post("/callLLM")
 async def process_data(query: userQuery, status: Status):

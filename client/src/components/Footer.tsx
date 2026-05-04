@@ -3,7 +3,7 @@ export default function Footer() {
     <footer className="mt-24 border-t-[3px] border-foreground bg-foreground text-background">
       <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 md:grid-cols-3">
         <div>
-          <div className="text-2xl font-black">GBU SAGE</div>
+          <div className="text-2xl font-black">Mentora</div>
           <p className="mt-2 text-sm opacity-80">
             The unofficial student assistant for Gautam Buddha University.
           </p>
@@ -24,7 +24,7 @@ export default function Footer() {
         </div>
       </div>
       <div className="border-t border-background/20 px-4 py-4 text-center text-xs opacity-70">
-        © {new Date().getFullYear()} GBU SAGE. Not officially affiliated with the university.
+        © {new Date().getFullYear()} Mentora. Not officially affiliated with the university.
       </div>
     </footer>
   );

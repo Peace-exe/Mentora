@@ -1,4 +1,5 @@
 import { useState } from "react";
+import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { useUserStore } from "../store/userStore";
 
@@ -7,6 +8,7 @@ const API_BASE = import.meta.env.VITE_API_URL ?? "http://localhost:8000";
 export default function LoginPage() {
   const navigate = useNavigate();
   const setUser = useUserStore((s) => s.setUser);
+  const setWsToken = useUserStore((s) => s.setWsToken);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -19,26 +21,25 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const res = await fetch(`${API_BASE}/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.detail ?? "Something went wrong.");
-        return;
-      }
+      const { data } = await axios.post(
+        `${API_BASE}/auth/login`,
+        { email, password },
+        { withCredentials: true }
+      );
 
       if (data.success) {
         setUser(data.data, data.expires_at);
+
+        const { data: wsData } = await axios.get(`${API_BASE}/auth/ws-token`, {
+          withCredentials: true,
+        });
+        setWsToken(wsData.ws_token);
+
         navigate("/chat");
       }
-    } catch {
-      setError("Network error. Please try again.");
+    } catch (err: any) {
+      const msg = err.response?.data?.detail ?? "Network error. Please try again.";
+      setError(msg);
     } finally {
       setLoading(false);
     }

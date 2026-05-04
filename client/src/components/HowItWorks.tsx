@@ -1,7 +1,7 @@
 export default function HowItWorks() {
   const steps = [
     { n: "01", t: "Ask", d: "Type any question — about courses, hostels, exams, anything." },
-    { n: "02", t: "Retrieve", d: "SAGE searches GBU's indexed documents using vector embeddings." },
+    { n: "02", t: "Retrieve", d: "Mentora searches GBU's indexed documents using vector embeddings." },
     { n: "03", t: "Answer", d: "You get a clear, sourced response. Click any source to verify." },
   ];
   return (

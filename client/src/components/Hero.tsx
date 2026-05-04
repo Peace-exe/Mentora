@@ -24,7 +24,7 @@ export default function Hero() {
   </span>
 </h1>
           <p className="mt-6 max-w-lg text-lg font-medium text-muted-foreground">
-            SAGE is a RAG-powered AI assistant that reads GBU's official handbooks,
+            Mentora is a RAG-powered AI assistant that reads GBU's official handbooks,
             calendars and notices — so you don't have to. Ask anything, get sourced answers in seconds.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
@@ -61,7 +61,7 @@ export default function Hero() {
               <div className="h-3 w-3 rounded-full bg-primary border-2 border-foreground" />
               <div className="h-3 w-3 rounded-full bg-accent border-2 border-foreground" />
               <div className="h-3 w-3 rounded-full bg-secondary border-2 border-foreground" />
-              <span className="ml-2 text-xs font-black uppercase">SAGE · live</span>
+              <span className="ml-2 text-xs font-black uppercase">Mentora · live</span>
             </div>
             <div className="mt-4 space-y-3">
               <div className="brutal-sm bg-primary p-3">
@@ -69,7 +69,7 @@ export default function Hero() {
                 <p className="font-bold">When does the next semester begin?</p>
               </div>
               <div className="brutal-sm bg-secondary p-3">
-                <div className="text-[10px] font-black uppercase opacity-70">SAGE</div>
+                <div className="text-[10px] font-black uppercase opacity-70">Mentora</div>
                 <p className="font-medium">
                   The odd semester begins late July. Exact dates are published in the academic calendar by the Dean's office.
                 </p>

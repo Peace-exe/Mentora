@@ -50,7 +50,7 @@ Text:
     return questions
 
 
-async def generate_response(context: list[str], query: str):
+async def generate_response(context: list[str], query: str, websocket):
     context_str = "\n\n---\n\n".join(context)
     
     prompt = f"""You are Mentora, an intelligent assistant for Gautam Buddha University.
@@ -74,10 +74,15 @@ QUESTION:
 
 ANSWER:"""
 
-    response = await openai.ainvoke([
-        HumanMessage(content=prompt)
-    ])
+    async for chunk in openai.astream([HumanMessage(content=prompt)]):
+        token = chunk.content
+        if token:
+            await websocket.send_json({
+                "success": True,
+                "token": token,
+                "done": False
+            })
 
-    return response.content
-
+    
+    
 

@@ -83,16 +83,18 @@ async def getResponse(websocket: WebSocket):
                         if doc.hasEmail: meta["hasEmail"] = True
                         if doc.lang == "hin": meta["lang"] = "hin"
 
+            
             # Step 5: LLM — empty context bhi bhejo, LLM handle karega
             try:
-                llmResponse = await generate_response(context_chunks, query)
+                await generate_response(context_chunks, query, websocket)
             except Exception as e:
                 await websocket.send_json({"success": False, "error": f"LLM response generation failed: {str(e)}"})
                 continue
 
             await websocket.send_json({
                 "success": True,
-                "response": llmResponse,
+                "token": "",
+                "done": True,
                 "hasTable": meta["hasTable"],
                 "hasURL": meta["hasURL"],
                 "hasMobileNo": meta["hasMobileNo"],

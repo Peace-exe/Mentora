@@ -7,7 +7,7 @@ export default function CTA() {
           Stop guessing.<br />Start asking.
         </h2>
         <p className="mx-auto mt-4 max-w-xl text-lg font-medium">
-          Try SAGE now — no signup, no setup. Just answers.
+          Try Mentora now — no signup, no setup. Just answers.
         </p>
         <Link
           to="/chat"

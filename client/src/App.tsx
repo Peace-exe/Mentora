@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import HomePage from "./pages/Home";
 import ChatPage from "./pages/Chat";
-
+import RequireAdmin from "./components/RequireAdmin";
 
 import './App.css'
 import AdminPage from "./pages/Admin";
@@ -18,7 +18,10 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/chat" element={<ChatPage />} />
-        <Route path="/admin" element={<AdminPage/>}/>
+        <Route element={<RequireAdmin />}>
+          <Route path="/admin" element={<AdminPage/>}/>
+        </Route>
+        
         <Route path="/login" element={<LoginPage/>}/>
         <Route path="/signup" element={<SignupPage/>}/>
       </Routes>

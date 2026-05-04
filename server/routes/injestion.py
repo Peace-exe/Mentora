@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, UploadFile, File, Depends
+from fastapi import APIRouter, HTTPException, UploadFile, File, Depends, Form
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import Literal
@@ -134,41 +134,131 @@ async def upsertInfo(body: info, dep = Depends(require_role("admin"))):
 
 
 @injestionRouter.post("/storeNotice")
-async def storeNotice(file: UploadFile = File(...)):
-
-    
+async def storeNotice(
+    file: UploadFile = File(...),
+    infoId: str = Form(...),
+    category: str = Form(...),
+    dep=Depends(require_role("admin"))
+):
     SUPPORTED = {".pdf", ".jpg", ".jpeg", ".png"}
 
     try:
-        
         BASE_DIR = os.path.dirname(os.path.abspath(__file__))
         UPLOAD_DIR = os.path.join(BASE_DIR, "../ocr/inputImg")
         os.makedirs(UPLOAD_DIR, exist_ok=True)
+
         filename = file.filename
-
         ext = os.path.splitext(filename)[1].lower()
-        if ext not in SUPPORTED: raise HTTPException(status_code=400, detail=f"Unsupported file type: {ext}")
+        if ext not in SUPPORTED:
+            raise HTTPException(status_code=400, detail=f"Unsupported file type: {ext}")
 
-                                       
-                      
-        
         file_path = os.path.join(UPLOAD_DIR, filename)
-        
         with open(file_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
 
-        res = process_files()
+        pages = process_files()
 
-        return JSONResponse(
-            status_code=201,
-            content={
-                "message":"Successfull",
-                "data":res
-            }
-        )
-
-        
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Something went wromg.\n{e}")
+        raise HTTPException(status_code=500, detail=f"OCR processing failed: {e}")
+
+    all_mongoIds = []
+    all_chunks = []
+    all_hyQues = []
+    all_vectors_count = 0
+
+    for page in pages:
+        fullInfo = page["response"]
+        storedDoc = None
+
+        has_table = page["hasTable"]
+        has_url = bool(page["hasURL"])
+        has_mobile = bool(page["hasMobileNo"])
+        has_email = bool(page["hasEmail"])
+
+        try:
+            chunks = semantic_chunking(fullInfo)
+            if not chunks:
+                raise ValueError("Chunking returned empty result")
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Chunking failed on page {page['page']}: {e}")
+
+        try:
+            hyQues = [generate_questions(chunk) for chunk in chunks]
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Hypothetical question generation failed on page {page['page']}: {e}")
+
+        try:
+            doc = UniversityInfo(
+                info=fullInfo,
+                infoId=f"{infoId}_p{page['page']}",
+                category=category,
+                source=page["source_file"],
+                lang=page["language"],
+                hasTable=has_table,
+                hasURL=has_url,
+                hasMobileNo=has_mobile,
+                hasEmail=has_email,
+                chunks=chunks,
+                hyQues=hyQues
+            )
+            storedDoc = await doc.insert()
+            mongoId = str(storedDoc.id)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"MongoDB insert failed on page {page['page']}: {e}")
+
+        try:
+            vectors = []
+
+            chunk_embeddings = generate_embeddings(chunks)
+            for chunk_idx, (chunk, embedding) in enumerate(zip(chunks, chunk_embeddings)):
+                vectors.append({
+                    "id": f"{mongoId}_chunk{chunk_idx}",
+                    "values": embedding,
+                    "metadata": {
+                        "mongoId": mongoId,
+                        "chunkNo": chunk_idx,
+                        "type": "chunk",
+                        "category": category
+                    }
+                })
+
+            for chunk_idx, questions in enumerate(hyQues):
+                q_embeddings = generate_embeddings(questions)
+                for q_idx, (question, embedding) in enumerate(zip(questions, q_embeddings)):
+                    vectors.append({
+                        "id": f"{mongoId}_chunk{chunk_idx}_q{q_idx}",
+                        "values": embedding,
+                        "metadata": {
+                            "mongoId": mongoId,
+                            "chunkNo": chunk_idx,
+                            "type": "hyQue",
+                            "category": category
+                        }
+                    })
+
+            index.upsert(vectors=vectors)
+
+        except Exception as e:
+            if storedDoc:
+                await storedDoc.delete()
+                print(f"🔄 Rolled back MongoDB insert for {mongoId}")
+            raise HTTPException(status_code=500, detail=f"Pinecone upsert failed on page {page['page']}, MongoDB rolled back: {e}")
+
+        all_mongoIds.append(mongoId)
+        all_chunks.extend(chunks)
+        all_hyQues.extend(hyQues)
+        all_vectors_count += len(vectors)
+
+    return JSONResponse(
+        status_code=201,
+        content={
+            "success": True,
+            "mongoId": all_mongoIds[0] if len(all_mongoIds) == 1 else all_mongoIds,
+            "totalChunks": len(all_chunks),
+            "totalVectors": all_vectors_count,
+            "chunks": all_chunks,
+            "hyQues": all_hyQues,
+        }
+    )

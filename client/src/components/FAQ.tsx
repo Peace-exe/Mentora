@@ -1,16 +1,16 @@
 export default function FAQ() {
   const items = [
     {
-      q: "Is SAGE official?",
-      a: "No — SAGE is a student-built tool. It uses publicly available GBU documents to help students navigate university life.",
+      q: "Is Mentora official?",
+      a: "No — Mentora is a student-built tool. It uses publicly available GBU documents to help students navigate university life.",
     },
     {
       q: "What is RAG?",
-      a: "Retrieval-Augmented Generation. SAGE retrieves relevant chunks from GBU documents, then generates an answer grounded in them. That's why every reply has sources.",
+      a: "Retrieval-Augmented Generation. Mentora retrieves relevant chunks from GBU documents, then generates an answer grounded in them. That's why every reply has sources.",
     },
     {
       q: "Will it replace my mentor?",
-      a: "Nope. SAGE handles routine questions instantly so mentors and seniors can focus on the things that actually need a human.",
+      a: "Nope. Mentora handles routine questions instantly so mentors and seniors can focus on the things that actually need a human.",
     },
     {
       q: "What can I ask?",

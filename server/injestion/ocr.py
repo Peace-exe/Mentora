@@ -37,24 +37,28 @@ def ocr_page(pil_image):
 
 
     prompt = textwrap.dedent("""
-        You are a document parser for university notices. Extract and structure the content strictly.
+    You are a document parser for university notices. Extract and structure the content strictly.
 
-        Field rules:
-        - "response": factual summary of the content. Embed tables inline as Markdown exactly where they appear in the original document. Plain text before and after tables. Do NOT use phrases like "The document", "The notice", "The order". State facts directly.
-        - "hasTable": true or false
-        - "language": "hin" if Hindi dominant, "en" if English dominant
-        - "hasURL": full URL string if found, false if not
+    Field rules:
+    - "response": factual summary of the content. Embed tables inline as Markdown exactly where they appear in the original document. Plain text before and after tables. Do NOT use phrases like "The document", "The notice", "The order". State facts directly.
+    - "hasTable": true or false
+    - "language": "hin" if Hindi dominant, "en" if English dominant
+    - "hasURL": full URL string if found, false if not
+    - "hasMobileNo": full mobile number string if found, false if not
+    - "hasEmail": full email string if found, false if not
 
-        Example output:
-        {
-          "response": "Hostel mess exemption granted to Jatin Kumar (235UIT026) and Shivani Priya (225/UCA/037) for session 2024-25.\\n\\n| Sr. No. | Name | Roll No. | Recommendation |\\n|---------|------|----------|----------------|\\n| 1 | Jatin Kumar | 235UIT026 | Hostel & Mess Exemption |\\n| 2 | Shivani Priya | 225/UCA/037 | Hostel & Mess Exemption |\\n\\nOrder to be displayed on notice boards and university website. Signed by Dr. Manmohan Singh, In-Charge Student Affairs.",
-          "hasTable": true,
-          "language": "en",
-          "hasURL": false
-        }
+    Example output:
+    {
+      "response": "Hostel mess exemption granted to Jatin Kumar (235UIT026) and Shivani Priya (225/UCA/037) for session 2024-25.\\n\\n| Sr. No. | Name | Roll No. | Recommendation |\\n|---------|------|----------|----------------|\\n| 1 | Jatin Kumar | 235UIT026 | Hostel & Mess Exemption |\\n| 2 | Shivani Priya | 225/UCA/037 | Hostel & Mess Exemption |\\n\\nOrder to be displayed on notice boards and university website. Signed by Dr. Manmohan Singh, In-Charge Student Affairs.",
+      "hasTable": true,
+      "language": "en",
+      "hasURL": false,
+      "hasMobileNo": "9876543210",
+      "hasEmail": "info@gbu.ac.in"
+    }
 
-        Return ONLY the JSON object with exactly these 4 fields: "response", "hasTable", "language", "hasURL". No extra fields. No markdown. No backticks. Start with { and end with }.
-    """).strip()
+    Return ONLY the JSON object with exactly these 6 fields: "response", "hasTable", "language", "hasURL", "hasMobileNo", "hasEmail". No extra fields. No markdown. No backticks. Start with { and end with }.
+""").strip()
     
     message = HumanMessage(content=[
         {

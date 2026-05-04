@@ -100,7 +100,7 @@ async def admin_signup(body: UserRegister):
         )
         await user.insert()
 
-        return {"message": "Admin created successfully", "success": True}
+        return {"message": "Admin created successfully", "success": True, "data":user}
 
     except HTTPException:
         raise

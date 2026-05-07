@@ -15,7 +15,7 @@ settings = Settings()
 DOCUMENT_MODELS = [
     UniversityInfo,
     User
-    # add new models here only
+    
 ]
 
 async def connectDB():
